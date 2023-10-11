@@ -16,14 +16,19 @@ namespace QuizApi.Controllers
     [Authorize]
     public class QuizApiController : ControllerBase
     {
-        public QuizApiController() { }
+        private readonly QuizApiRepository _repository;
+
+        public QuizApiController(QuizApiRepository repository) 
+        {
+            _repository = repository;
+        }
 
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ActionResult<LoginResponse>> Login(LoginRequest request, [FromServices]QuizApiRepository repository)
+        public async Task<ActionResult<LoginResponse>> Login([FromQuery]LoginRequest request)
         {
-            var user = await repository.GetUserAsync(request.Login, request.Password);
+            var user = await _repository.GetUserAsync(request.Login, request.Password);
 
             if (user == null)
                 return Unauthorized();
@@ -33,13 +38,12 @@ namespace QuizApi.Controllers
             return new LoginResponse { Token = token };
         }
 
-        [HttpGet]     
-        public async Task<IActionResult> Quizzes([FromServices] QuizApiRepository repository)
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult<QuizApiesResponse>> Quizzes([FromQuery]QuizzesRequest request)
         {
-        
-            return Ok();
+            var quizzes = await _repository.GetQuizzesAsync(request.Page, request.PageSize);
+            return new QuizApiesResponse { Quizzes = quizzes } ;
         }
-
-
     }
 }

@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace QuizApi.Data.Db.Enteties
+namespace QuizApi.Data.Db.Enteties;
+
+public partial class Quiz
 {
-    public class Quiz
-    {
-        public long Id { get; set; }
-        public string Name { get; set; }
-    }
+    public long Id { get; set; }
+
+    public string Name { get; set; } = null!;
+
+    public virtual ICollection<Question> Questions { get; set; } = new List<Question>();
+
+    public virtual ICollection<Take> Takes { get; set; } = new List<Take>();
+
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }

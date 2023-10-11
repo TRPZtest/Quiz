@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace QuizApi.Data.Db.Enteties
+namespace QuizApi.Data.Db.Enteties;
+
+public partial class User
 {
-    public class User
-    {
-        [Key]
-        public long Id { get; set; }
-        public string  Login { get; set; }
-        public string Password { get; set; }
-    }
+    public long Id { get; set; }
+
+    public string? Login { get; set; }
+
+    public string? Password { get; set; }
+
+    public virtual ICollection<Take> Takes { get; set; } = new List<Take>();
+
+    public virtual ICollection<Quiz> Quizzes { get; set; } = new List<Quiz>();
 }
