@@ -1,41 +1,45 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using Quiz.Configuration;
+using QuizApi.Configuration;
+using QuizApi.Data.Db;
+using QuizApi.Helpers;
+using QuizApi.Models;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
-namespace Quiz.Controllers
+namespace QuizApi.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class QuizController : ControllerBase
+    [Authorize]
+    public class QuizApiController : ControllerBase
     {
-        public QuizController() { }
+        public QuizApiController() { }
 
 
-        [HttpGet]
-        public async Task<string> Login([FromQuery][Required]string login, [FromQuery][Required] string password)
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<ActionResult<LoginResponse>> Login(LoginRequest request, [FromServices]QuizApiRepository repository)
         {
-            var userId = 14;
-            var claims = new Claim[] { new Claim("userId", userId.ToString()) };
-            var jwt = new JwtSecurityToken(
-                issuer: AuthOptions.ISSUER,
-                audience: AuthOptions.AUDIENCE,
-                claims: claims,
-                expires: DateTime.UtcNow.Add(TimeSpan.FromMinutes(2)), // время действия 2 минуты
-                signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256)
-            );
+            var user = await repository.GetUserAsync(request.Login, request.Password);
 
-            return new JwtSecurityTokenHandler().WriteToken(jwt);
+            if (user == null)
+                return Unauthorized();
+            
+            var token = JwtHelper.GetJwt(user);
+
+            return new LoginResponse { Token = token };
         }
 
-        [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> Quizes()
+        [HttpGet]     
+        public async Task<IActionResult> Quizzes([FromServices] QuizApiRepository repository)
         {
+        
             return Ok();
         }
+
+
     }
 }

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz", "Quiz\Quiz.csproj", "{0C6C3330-9C1E-4AC6-A124-06B7389D628D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizApi", "Quiz\QuizApi.csproj", "{0C6C3330-9C1E-4AC6-A124-06B7389D628D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Quiz.Data", "Quiz.Data\Quiz.Data.csproj", "{AB9B337C-0D35-4797-8AFB-3F5B020C39CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuizApi.Data", "Quiz.Data\QuizApi.Data.csproj", "{AB9B337C-0D35-4797-8AFB-3F5B020C39CD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F88A6DB3-8949-4062-813A-68590750D91E}"
 	ProjectSection(SolutionItems) = preProject

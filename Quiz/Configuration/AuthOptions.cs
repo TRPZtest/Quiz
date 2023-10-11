@@ -1,7 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
-namespace Quiz.Configuration
+namespace QuizApi.Configuration
 {
     public class AuthOptions
     {

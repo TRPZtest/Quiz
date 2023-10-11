@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Quiz.Configuration;
-using Quiz.Data.Db;
+using QuizApi.Configuration;
+using QuizApi.Data.Db;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,7 +40,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddDbContext<QuizDbcontext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("testingDb")));
+builder.Services.AddDbContext<QuizApiDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("testingDb")));
 
 var app = builder.Build();
 

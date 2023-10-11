@@ -1,4 +1,4 @@
-namespace Quiz
+namespace QuizApi
 {
     public class WeatherForecast
     {

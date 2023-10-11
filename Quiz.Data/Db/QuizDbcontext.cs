@@ -1,15 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using QuizApi.Data.Db.Enteties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Quiz.Data.Db
+namespace QuizApi.Data.Db
 {
-    public class QuizDbcontext : DbContext
+    public class QuizApiDbContext : DbContext
     {
-        public QuizDbcontext(DbContextOptions options) : base(options) { }
+        public DbSet<User> Users { get; set; }
+
+        public QuizApiDbContext(DbContextOptions options) : base(options) { }
 
 
     }

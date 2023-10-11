@@ -1,4 +1,4 @@
-﻿namespace Quiz.Data
+﻿namespace QuizApi.Data
 {
     public class Class1
     {
