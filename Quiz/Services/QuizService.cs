@@ -9,9 +9,9 @@ namespace QuizApi.Services
 {
     public class QuizService
     {
-        private IQuizApiRepository _repository;
+        private readonly IQuizRepository _repository;
 
-        public QuizService(IQuizApiRepository repository) 
+        public QuizService(IQuizRepository repository) 
         { 
             _repository = repository;
         }
@@ -24,7 +24,7 @@ namespace QuizApi.Services
        
         public async Task<long> AddTakeAsync(long quizId, long userId)
         {
-            var takeId = await _repository.AddTakeWithSavingAsync(new Data.Db.Enteties.Take { QuizId = quizId, UserId = 1 });
+            var takeId = await _repository.AddTakeWithSavingAsync(new Data.Db.Enteties.Take { QuizId = quizId, UserId = userId });
 
             if (takeId == 1)
                 throw new Exception("Error while adding new take");
@@ -60,7 +60,7 @@ namespace QuizApi.Services
             return addedItemsCount;
         }
       
-        public async Task<Result> GetResultAsync(long takeId)
+        public async Task<Result?> GetResultAsync(long takeId)
         {
             var result = await _repository.GetResultAsync(takeId);
            

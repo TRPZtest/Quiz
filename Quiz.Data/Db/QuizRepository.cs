@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace QuizApi.Data.Db
 {
-    public class QuizRepository : IQuizApiRepository
+    public class QuizRepository : IQuizRepository
     {
         private readonly TestingDbContext _context;
 

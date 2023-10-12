@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuizApi.Data.Db.Enteties;
+using QuizApi.Data.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

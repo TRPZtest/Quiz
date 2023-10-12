@@ -26,7 +26,8 @@ namespace QuizApi.Controllers
             _quizService = quizService;           
         }
      
-        [HttpGet]       
+        [HttpGet]
+        [AllowAnonymous]
         public async Task<ActionResult<QuizApiesResponse>> Quizzes([FromQuery][Required]int page, [FromQuery][Required]int pageSize)
         {
             var quizzes = await _quizService.GetQuizzesAsync(page, pageSize);
@@ -37,7 +38,7 @@ namespace QuizApi.Controllers
         [HttpPost]
         public async Task<ActionResult<TakePostResponse>> Take([FromQuery]long quizId)
         {
-            var takeId = await _quizService.AddTakeAsync(quizId, userId: 1);
+            var takeId = await _quizService.AddTakeAsync(quizId, User.GetUserId());
          
             return new TakePostResponse { TakeId = takeId };
         }

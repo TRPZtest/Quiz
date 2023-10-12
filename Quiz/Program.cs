@@ -40,7 +40,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddDbContext<TestingDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("testingDb")));
-builder.Services.AddScoped<IQuizApiRepository, QuizRepository>();
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<QuizService>();
 builder.Services.AddScoped<AuthService>();
