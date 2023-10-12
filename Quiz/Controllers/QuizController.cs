@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using QuizApi.Configuration;
 using QuizApi.Data.Db;
+using QuizApi.Data.Db.Enteties;
 using QuizApi.Helpers;
 using QuizApi.Models;
+using QuizApi.Services;
 using System.ComponentModel.DataAnnotations;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,36 +17,54 @@ namespace QuizApi.Controllers
     [ApiController]
     [Route("[controller]/[action]")]
     [Authorize]
-    public class QuizApiController : ControllerBase
+    public class QuizController : ControllerBase
     {
-        private readonly QuizApiRepository _repository;
+        private readonly QuizService _quizService;
 
-        public QuizApiController(QuizApiRepository repository) 
+        public QuizController(QuizService quizService) 
         {
-            _repository = repository;
+            _quizService = quizService;           
         }
-
-
-        [HttpPost]
-        [AllowAnonymous]
-        public async Task<ActionResult<LoginResponse>> Login([FromQuery]LoginRequest request)
+     
+        [HttpGet]       
+        public async Task<ActionResult<QuizApiesResponse>> Quizzes([FromQuery][Required]int page, [FromQuery][Required]int pageSize)
         {
-            var user = await _repository.GetUserAsync(request.Login, request.Password);
+            var quizzes = await _quizService.GetQuizzesAsync(page, pageSize);
 
-            if (user == null)
-                return Unauthorized();
-            
-            var token = JwtHelper.GetJwt(user);
-
-            return new LoginResponse { Token = token };
+            return new QuizApiesResponse { Quizzes = quizzes };
         }
 
         [HttpPost]
-        [AllowAnonymous]
-        public async Task<ActionResult<QuizApiesResponse>> Quizzes([FromQuery]QuizzesRequest request)
+        public async Task<ActionResult<TakePostResponse>> Take([FromQuery]long quizId)
         {
-            var quizzes = await _repository.GetQuizzesAsync(request.Page, request.PageSize);
-            return new QuizApiesResponse { Quizzes = quizzes } ;
+            var takeId = await _quizService.AddTakeAsync(quizId, userId: 1);
+         
+            return new TakePostResponse { TakeId = takeId };
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Responses([FromBody]ResponsesRequest request)
+        {
+            await _quizService.AddResponsesAsync(request.Responses);
+            return Ok();
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Result(ResultPostRequest request)
+        {
+            await _quizService.AddResultAsync(request.TakeId);
+            return Ok();
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<Result>> Result([FromQuery]long takeId)
+        {
+            var result = await _quizService.GetResultAsync(takeId);
+
+            if (result == null)
+                return NotFound();
+
+            return result;
         }
     }
 }

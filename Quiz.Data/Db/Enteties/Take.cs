@@ -9,11 +9,13 @@ public partial class Take
 
     public long UserId { get; set; }
 
-    public long TestId { get; set; }
+    public long QuizId { get; set; }
+
+    public virtual Quiz Quiz { get; set; } = null!;
 
     public virtual ICollection<Response> Responses { get; set; } = new List<Response>();
 
-    public virtual Quiz Test { get; set; } = null!;
+    public virtual Result? Result { get; set; }
 
     public virtual User User { get; set; } = null!;
 }

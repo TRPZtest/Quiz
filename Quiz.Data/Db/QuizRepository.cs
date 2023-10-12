@@ -16,17 +16,10 @@ namespace QuizApi.Data.Db
         {
             _context = dbContext;
         }
-
-        public async Task<User>GetUserAsync(string login, string password)
-        {
-            var user = await _context.Users
-                .AsNoTracking()
-                .FirstAsync(x => x.Login == login && x.Password == x.Password);            
-            return user;
-        }
-
-        public async Task<List<Quiz>> GetQuizzesAsync(int page, int pageSize)
-        {
+       
+        public async Task<List<Quiz>>GetQuizzesAsync(int page, int pageSize)
+        {        
+            var test =  _context.Quizzes.Where(x => x.Id == 3);
             var quizzes = await _context.Quizzes.AsNoTracking()               
                 .Skip(page * pageSize)
                 .Take(pageSize)
@@ -47,14 +40,60 @@ namespace QuizApi.Data.Db
             return quiz;
         }
 
-        public async Task AddResponsesAsync(IEnumerable<Response> responses)
+        public async Task<Response[]> GetResponses(long takeId)
+        {
+            var responses = await _context.Responses.Where(x => x.TakeId == takeId)
+                .Include(x => x.Option)
+                .AsNoTracking()
+                .ToArrayAsync();
+
+            return responses;
+        }
+
+        public async Task<Response[]> GetResponses(long takeId, long questionId)
+        {
+            var responses = await _context.Responses.Where(x => x.TakeId == takeId)
+                .Include(x => x.Option)
+                .AsNoTracking()
+                .ToArrayAsync();
+            
+            return responses;
+        }
+
+        public async Task AddResponsesAsync(params Response[] responses)
         {
             await _context.Responses.AddRangeAsync(responses);
         }
 
-        public async Task SaveChangesAsync()
+        public async Task<long> AddTakeWithSavingAsync(Take take)
         {
-            await _context.SaveChangesAsync();
+            var result = await _context.Takes.AddAsync(take);
+            await SaveChangesAsync();
+
+            var insertedTakeId = result.Entity.Id;
+
+            return insertedTakeId;
         }
+
+        public async Task AddResultAsync(Result result)
+        {
+            await _context.Results.AddAsync(result);
+        }
+
+        public async Task<Result?> GetResultAsync(long takeId)
+        {
+            var result = await _context.Results
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.TakeId == takeId);
+
+            return result;
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            var dbChangesCount = await _context.SaveChangesAsync();
+
+            return dbChangesCount;
+        }      
     }
 }
