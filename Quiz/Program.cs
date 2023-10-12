@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using QuizApi.Configuration;
 using QuizApi.Data.Db;
 using QuizApi.Data.Db.Enteties;
+using QuizApi.Data.Interfaces;
 using QuizApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,8 +40,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     });
 
 builder.Services.AddDbContext<TestingDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("testingDb")));
-builder.Services.AddScoped<QuizApiRepository>();
-builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<IQuizApiRepository, QuizRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<QuizService>();
 builder.Services.AddScoped<AuthService>();
 

@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 
 namespace QuizApi.Data.Db
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         private readonly TestingDbContext _context;
 
-        public UserRepository(TestingDbContext dbContext) 
-        { 
+        public UserRepository(TestingDbContext dbContext)
+        {
             _context = dbContext;
         }
 

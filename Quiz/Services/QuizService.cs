@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using QuizApi.Data.Db;
 using QuizApi.Data.Db.Enteties;
+using QuizApi.Data.Interfaces;
 using QuizApi.Models;
 using System.ComponentModel.DataAnnotations;
 
@@ -8,9 +9,9 @@ namespace QuizApi.Services
 {
     public class QuizService
     {
-        private QuizApiRepository _repository;
+        private IQuizApiRepository _repository;
 
-        public QuizService(QuizApiRepository repository) 
+        public QuizService(IQuizApiRepository repository) 
         { 
             _repository = repository;
         }

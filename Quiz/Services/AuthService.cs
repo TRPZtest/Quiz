@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using QuizApi.Data.Db;
+using QuizApi.Data.Interfaces;
 using QuizApi.Helpers;
 using QuizApi.Models;
 
@@ -7,9 +8,9 @@ namespace QuizApi.Services
 {
     public class AuthService
     {
-        private readonly UserRepository _repository;
+        private readonly IUserRepository _repository;
 
-        public AuthService(UserRepository userRepository) 
+        public AuthService(IUserRepository userRepository) 
         {
             _repository = userRepository;
         }

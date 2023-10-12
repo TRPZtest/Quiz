@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using QuizApi.Data.Db.Enteties;
+using QuizApi.Data.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,19 +9,19 @@ using System.Threading.Tasks;
 
 namespace QuizApi.Data.Db
 {
-    public class QuizApiRepository
+    public class QuizRepository : IQuizApiRepository
     {
         private readonly TestingDbContext _context;
 
-        public QuizApiRepository(TestingDbContext dbContext) 
+        public QuizRepository(TestingDbContext dbContext)
         {
             _context = dbContext;
         }
-       
-        public async Task<List<Quiz>>GetQuizzesAsync(int page, int pageSize)
-        {        
-            var test =  _context.Quizzes.Where(x => x.Id == 3);
-            var quizzes = await _context.Quizzes.AsNoTracking()               
+
+        public async Task<List<Quiz>> GetQuizzesAsync(int page, int pageSize)
+        {
+            var test = _context.Quizzes.Where(x => x.Id == 3);
+            var quizzes = await _context.Quizzes.AsNoTracking()
                 .Skip(page * pageSize)
                 .Take(pageSize)
                 .AsNoTracking()
@@ -29,7 +30,7 @@ namespace QuizApi.Data.Db
             return quizzes;
         }
 
-        public async Task<Quiz>GetQuizAsync(long quizId)
+        public async Task<Quiz> GetQuizAsync(long quizId)
         {
             var quiz = await _context.Quizzes.AsNoTracking()
                 .Include(x => x.Questions)
@@ -56,7 +57,7 @@ namespace QuizApi.Data.Db
                 .Include(x => x.Option)
                 .AsNoTracking()
                 .ToArrayAsync();
-            
+
             return responses;
         }
 
@@ -94,6 +95,6 @@ namespace QuizApi.Data.Db
             var dbChangesCount = await _context.SaveChangesAsync();
 
             return dbChangesCount;
-        }      
+        }
     }
 }
