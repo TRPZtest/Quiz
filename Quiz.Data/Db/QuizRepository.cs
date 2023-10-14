@@ -18,13 +18,10 @@ namespace QuizApi.Data.Db
             _context = dbContext;
         }
 
-        public async Task<List<Quiz>> GetQuizzesAsync(int page, int pageSize)
+        public async Task<List<Quiz>> GetQuizzesAsync()
         {
             var test = _context.Quizzes.Where(x => x.Id == 3);
-            var quizzes = await _context.Quizzes.AsNoTracking()
-                .Skip(page * pageSize)
-                .Take(pageSize)
-                .AsNoTracking()
+            var quizzes = await _context.Quizzes.AsNoTracking()                          
                 .ToListAsync();
 
             return quizzes;
@@ -32,7 +29,7 @@ namespace QuizApi.Data.Db
 
         public async Task<Quiz> GetQuizAsync(long quizId)
         {
-            var quiz = await _context.Quizzes.AsNoTracking()
+            var quiz = await _context.Quizzes
                 .Include(x => x.Questions)
                     .ThenInclude(x => x.Options)
                 .AsNoTracking()

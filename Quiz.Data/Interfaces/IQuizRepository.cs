@@ -8,7 +8,7 @@ namespace QuizApi.Data.Interfaces
         Task AddResultAsync(Result result);
         Task<long> AddTakeWithSavingAsync(Take take);
         Task<Quiz> GetQuizAsync(long quizId);
-        Task<List<Quiz>> GetQuizzesAsync(int page, int pageSize);
+        Task<List<Quiz>> GetQuizzesAsync();
         Task<Response[]> GetResponses(long takeId);
         Task<Response[]> GetResponses(long takeId, long questionId);
         Task<Result?> GetResultAsync(long takeId);

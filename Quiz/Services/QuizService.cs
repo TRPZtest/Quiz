@@ -16,12 +16,20 @@ namespace QuizApi.Services
             _repository = repository;
         }
       
-        public async Task<List<Quiz>> GetQuizzesAsync(int page, int pageSize)
+        public async Task<List<Quiz>> GetQuizzesAsync()
         {
-            var quizzes = await _repository.GetQuizzesAsync(page, pageSize);
+            var quizzes = await _repository.GetQuizzesAsync();
+            
             return quizzes;
         }
        
+        public async Task<Quiz> GetQuizAsync(long Id)
+        {
+            var quiz = await _repository.GetQuizAsync(Id);
+
+            return quiz;    
+        }
+
         public async Task<long> AddTakeAsync(long quizId, long userId)
         {
             var takeId = await _repository.AddTakeWithSavingAsync(new Data.Db.Enteties.Take { QuizId = quizId, UserId = userId });

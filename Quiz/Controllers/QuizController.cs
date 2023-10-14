@@ -25,14 +25,25 @@ namespace QuizApi.Controllers
         {
             _quizService = quizService;           
         }
-     
-        [HttpGet]
-        [AllowAnonymous]
-        public async Task<ActionResult<QuizApiesResponse>> Quizzes([FromQuery][Required]int page, [FromQuery][Required]int pageSize)
-        {
-            var quizzes = await _quizService.GetQuizzesAsync(page, pageSize);
 
-            return new QuizApiesResponse { Quizzes = quizzes };
+     
+        [HttpGet]  
+        public async Task<ActionResult<QuizzesResponse>> Quizzes()
+        {
+            var quizzes = await _quizService.GetQuizzesAsync();
+
+            return new QuizzesResponse { Quizzes = quizzes };
+        }
+
+        [HttpGet]       
+        public async Task<ActionResult<QuizResponse>> Quiz([FromQuery] long id)
+        {
+            var quiz = await _quizService.GetQuizAsync(id);
+
+            if (quiz == null)
+                return NotFound();
+
+            return new QuizResponse { quiz = quiz };
         }
 
         [HttpPost]

@@ -11,7 +11,7 @@ namespace QuizApi.Controllers
     {
         private readonly AuthService _authService;
 
-        AuthController(AuthService authService)
+        public AuthController(AuthService authService)
         {
             _authService = authService;
         }
