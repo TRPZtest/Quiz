@@ -71,7 +71,9 @@ namespace QuizApi.Data.Db
 
         public async Task<Take?> GetTakeAsync(long userId, long quizId)
         {
-            var take = await _context.Takes.AsNoTracking()
+            var take = await _context.Takes
+                .Include(x => x.Result)
+                .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.UserId == userId && x.QuizId == quizId);
 
             return take;

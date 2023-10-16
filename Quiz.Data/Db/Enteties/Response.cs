@@ -11,8 +11,6 @@ public partial class Response
 
     public long OptionId { get; set; }
 
-    public DateTime Created { get; set; }
-
     public virtual Option Option { get; set; } = null!;
 
     public virtual Take Take { get; set; } = null!;

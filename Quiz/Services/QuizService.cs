@@ -30,14 +30,18 @@ namespace QuizApi.Services
             return quiz;    
         }
 
-        public async Task<long> AddTakeAsync(long quizId, long userId)
+        public async Task<Take> AddTakeAsync(long quizId, long userId)
         {
-            var takeId = await _repository.AddTakeWithSavingAsync(new Data.Db.Enteties.Take { QuizId = quizId, UserId = userId });
+            var take = await _repository.GetTakeAsync(userId, quizId);
 
-            if (takeId == 1)
-                throw new Exception("Error while adding new take");
-     
-            return takeId;
+            if (take == null)
+            {
+                take = await _repository.AddTakeAsync(new Take { QuizId = quizId, UserId = userId });
+
+                await _repository.SaveChangesAsync();
+            } 
+            
+            return take;
         }
       
         public async Task<int> AddResponsesAsync(Response[] responses)
@@ -51,21 +55,20 @@ namespace QuizApi.Services
             return addedItemsCount;
         }
        
-        public async Task<int> AddResultAsync(long takeId)
-        {
+        public async Task<Result> AddResultAsync(long takeId)
+        {           
             var responses = await _repository.GetResponses(takeId);
-            var quiz = await _repository.GetQuizAsync(takeId);
+            var quiz = await _repository.GetQuizByTakeIdAsync(takeId);
 
             var maxPoint = quiz.Questions.Count();
             var points = responses.Count(x => x.Option.IsCorrect == true);
 
-            await _repository.AddResultAsync(new Result { MaxPoints = maxPoint, Points = points });
+            var result = new Result { MaxPoints = maxPoint, Points = points, TakeId = takeId };
+
+            await _repository.AddResultAsync(result);
             var addedItemsCount = await _repository.SaveChangesAsync();
-
-            if (addedItemsCount < 1)
-                throw new Exception("Error while adding new result");
-
-            return addedItemsCount;
+          
+            return result;
         }
       
         public async Task<Result?> GetResultAsync(long takeId)
@@ -73,6 +76,13 @@ namespace QuizApi.Services
             var result = await _repository.GetResultAsync(takeId);
            
             return result;
+        }
+
+        public async Task<List<Option>> GetOptions(long questionId)
+        {
+            var options = await _repository.GetOptions(questionId);
+
+            return options;
         }
     }
 }

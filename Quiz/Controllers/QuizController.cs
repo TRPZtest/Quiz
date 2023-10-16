@@ -1,4 +1,5 @@
-﻿using Azure.Core;
+﻿using AutoMapper;
+using Azure.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -25,7 +26,6 @@ namespace QuizApi.Controllers
         {
             _quizService = quizService;           
         }
-
      
         [HttpGet]  
         public async Task<ActionResult<QuizzesResponse>> Quizzes()
@@ -36,47 +36,65 @@ namespace QuizApi.Controllers
         }
 
         [HttpGet]       
-        public async Task<ActionResult<QuizResponse>> Quiz([FromQuery] long id)
+        public async Task<ActionResult<QuizResponse>> Quiz([Required][FromQuery] long id)
         {
             var quiz = await _quizService.GetQuizAsync(id);
 
             if (quiz == null)
                 return NotFound();
 
-            return new QuizResponse { quiz = quiz };
+            return new QuizResponse { Quiz = quiz };
         }
 
         [HttpPost]
-        public async Task<ActionResult<TakePostResponse>> Take([FromQuery]long quizId)
+        public async Task<ActionResult<TakePostResponse>> Take([FromBody] TakeRequest request)
         {
-            var takeId = await _quizService.AddTakeAsync(quizId, User.GetUserId());
+            var take = await _quizService.AddTakeAsync(request.QuizId, User.GetUserId());
          
-            return new TakePostResponse { TakeId = takeId };
+            return new TakePostResponse { TakeId = take.Id, Result = take?.Result };
         }
 
         [HttpPost]
-        public async Task<ActionResult> Responses([FromBody]ResponsesRequest request)
+        public async Task<ActionResult<Result>> Responses([FromBody]QuizResponsesRequest request, [FromServices] IMapper mapper)
         {
-            await _quizService.AddResponsesAsync(request.Responses);
-            return Ok();
-        }
+            var responses = mapper.Map<Response[]>(request);
+            await _quizService.AddResponsesAsync(responses);
 
-        [HttpPost]
-        public async Task<ActionResult> Result(ResultPostRequest request)
-        {
-            await _quizService.AddResultAsync(request.TakeId);
-            return Ok();
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<Result>> Result([FromQuery]long takeId)
-        {
-            var result = await _quizService.GetResultAsync(takeId);
-
-            if (result == null)
-                return NotFound();
+            var result = await _quizService.AddResultAsync(request.TakeId);
 
             return result;
+        }
+
+        //[HttpPost]
+        //public async Task<ActionResult<Result>> Result(ResultPostRequest request)
+        //{
+        //    var result = await _quizService.AddResultAsync(request.TakeId);
+
+        //    return result;
+        //}
+
+        //[HttpGet]
+        //public async Task<ActionResult<Result>> Result([FromQuery][Required] long takeId)
+        //{
+        //    var result = await _quizService.GetResultAsync(takeId);
+
+        //    if (result == null)
+        //        return NotFound();
+
+        //    return result;
+        //}
+
+        [HttpGet]
+        public async Task<ActionResult<OptionsResponse>> Options([Required][FromQuery]long questionId, [FromServices]IMapper mapper)
+        {
+            var options = await _quizService.GetOptions(questionId);
+
+            if (options.Count() == 0)
+                return NotFound();
+
+            var optionViews = mapper.Map<List<OptionView>>(options);
+
+            return new OptionsResponse { Options = optionViews };
         }
     }
 }

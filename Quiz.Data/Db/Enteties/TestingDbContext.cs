@@ -78,7 +78,7 @@ public partial class TestingDbContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("PK__Response__3214EC07F0A2B57B");
 
-            entity.HasIndex(e => new { e.TakeId, e.QuestionId }, "TakeIdOptionIdUnique").IsUnique();
+       
 
             //entity.Property(e => e.Created).HasColumnType("datetime");
 
@@ -86,11 +86,6 @@ public partial class TestingDbContext : DbContext
                 .HasForeignKey(d => d.OptionId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Responses__Optio__7B1C2680");
-
-            entity.HasOne(d => d.Question).WithMany(p => p.Responses)
-                .HasForeignKey(d => d.QuestionId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK__Responses__Quest__7C104AB9");
 
             entity.HasOne(d => d.Take).WithMany(p => p.Responses)
                 .HasForeignKey(d => d.TakeId)
