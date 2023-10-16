@@ -88,7 +88,9 @@ namespace QuizApi.Data.Db
 
         public async Task<Result?> GetResultAsync(long takeId)
         {
-            var result = await _context.Results.FindAsync(takeId);           
+            var result = await _context.Results
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == takeId);           
              
             return result;
         }
