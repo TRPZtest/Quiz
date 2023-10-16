@@ -33,7 +33,7 @@ namespace QuizApi.Services
 
         public async Task<Take> AddTakeAsync(long quizId, long userId)
         {
-            Take take;
+            Take take; //instead of upsert
             try
             {
                 take = await _repository.AddTakeAsync(new Take { QuizId = quizId, UserId = userId });
@@ -44,9 +44,9 @@ namespace QuizApi.Services
             }
             catch (Exception ex)
             {
-                var innerEx = ex.InnerException as SqlException;
+                var innerEx = ex.InnerException;
 
-                if (innerEx?.Number == 2627) //instead of upsert antipattern
+                if (innerEx?.Message.Contains("UNIQUE") == true) 
                 {
                     take = await _repository.GetTakeAsync(userId, quizId);
 
