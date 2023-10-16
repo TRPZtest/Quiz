@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 using QuizApi.Data.Db;
 using QuizApi.Data.Db.Enteties;
 using QuizApi.Data.Interfaces;
@@ -16,9 +17,9 @@ namespace QuizApi.Services
             _repository = repository;
         }
       
-        public async Task<List<Quiz>> GetQuizzesAsync()
+        public async Task<List<Quiz>> GetQuizzesAsync(long userId)
         {
-            var quizzes = await _repository.GetQuizzesAsync();
+            var quizzes = await _repository.GetQuizzesAsync(userId);
             
             return quizzes;
         }
@@ -32,16 +33,28 @@ namespace QuizApi.Services
 
         public async Task<Take> AddTakeAsync(long quizId, long userId)
         {
-            var take = await _repository.GetTakeAsync(userId, quizId);
-
-            if (take == null)
+            Take take;
+            try
             {
                 take = await _repository.AddTakeAsync(new Take { QuizId = quizId, UserId = userId });
 
                 await _repository.SaveChangesAsync();
-            } 
-            
-            return take;
+
+                return take;
+            }
+            catch (Exception ex)
+            {
+                var innerEx = ex.InnerException as SqlException;
+
+                if (innerEx?.Number == 2627) //instead of upsert antipattern
+                {
+                    take = await _repository.GetTakeAsync(userId, quizId);
+
+                    return take;
+                }
+                else
+                    throw;            
+            }            
         }
       
         public async Task<int> AddResponsesAsync(Response[] responses)

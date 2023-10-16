@@ -30,7 +30,7 @@ namespace QuizApi.Controllers
         [HttpGet]  
         public async Task<ActionResult<QuizzesResponse>> Quizzes()
         {
-            var quizzes = await _quizService.GetQuizzesAsync();
+            var quizzes = await _quizService.GetQuizzesAsync(User.GetUserId());
 
             return new QuizzesResponse { Quizzes = quizzes };
         }

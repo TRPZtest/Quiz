@@ -18,13 +18,13 @@ namespace QuizApi.Data.Db
             _context = dbContext;
         }
 
-        public async Task<List<Quiz>> GetQuizzesAsync()
+        public async Task<List<Quiz>?> GetQuizzesAsync(long userId)
         {
-            var test = _context.Quizzes.Where(x => x.Id == 3);
-            var quizzes = await _context.Quizzes.AsNoTracking()                          
-                .ToListAsync();
-
-            return quizzes;
+            var user = await _context.Users
+                .Include(x => x.Quizzes)
+                .AsNoTracking().FirstOrDefaultAsync(x => x.Id == userId);
+            
+            return user?.Quizzes?.ToList();
         }
 
         public async Task<Quiz> GetQuizAsync(long quizId)
@@ -64,7 +64,9 @@ namespace QuizApi.Data.Db
 
         public async Task<Take> AddTakeAsync(Take take)
         {
-            var result = await _context.Takes.AddAsync(take);   
+            var result = await _context.Takes.AddAsync(take);
+
+            await _context.Entry(result.Entity).Reference(x => x.Result).LoadAsync();
 
             return result.Entity;
         }

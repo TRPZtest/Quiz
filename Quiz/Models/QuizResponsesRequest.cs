@@ -7,8 +7,7 @@ namespace QuizApi.Models
     public class QuizResponsesRequest
     {
         [Required]
-        public long TakeId { get; set; }
-        [Required]
-        public long[] OptionIds { get; set; }
+        public long TakeId { get; set; }      
+        public long[] OptionIds { get; set; } = new long[0];
     }
 }
