@@ -1,4 +1,6 @@
-﻿using QuizApi.Data.Db.Enteties;
+﻿using Microsoft.EntityFrameworkCore;
+using QuizApi.Data.Db.Enteties;
+using System.Net.Quic;
 
 namespace QuizApi.Data.Interfaces
 {
@@ -6,12 +8,15 @@ namespace QuizApi.Data.Interfaces
     {
         Task AddResponsesAsync(params Response[] responses);
         Task AddResultAsync(Result result);
-        Task<long> AddTakeWithSavingAsync(Take take);
+        Task<Take> AddTakeAsync(Take take);
+        Task<Take?> GetTakeAsync(long userId, long quizId);             
         Task<Quiz> GetQuizAsync(long quizId);
+        Task<Quiz> GetQuizByTakeIdAsync(long takeId);
         Task<List<Quiz>> GetQuizzesAsync();
         Task<Response[]> GetResponses(long takeId);
         Task<Response[]> GetResponses(long takeId, long questionId);
         Task<Result?> GetResultAsync(long takeId);
+        Task<List<Option>> GetOptions(long questionId);
         Task<int> SaveChangesAsync();
     }
 }

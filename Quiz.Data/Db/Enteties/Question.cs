@@ -13,7 +13,5 @@ public partial class Question
 
     public virtual ICollection<Option> Options { get; set; } = new List<Option>();
 
-    public virtual ICollection<Response> Responses { get; set; } = new List<Response>();
-
     public virtual Quiz Test { get; set; } = null!;
 }

@@ -30,10 +30,9 @@ namespace QuizApi.Data.Db
         public async Task<Quiz> GetQuizAsync(long quizId)
         {
             var quiz = await _context.Quizzes
-                .Include(x => x.Questions)
-                    .ThenInclude(x => x.Options)
-                .AsNoTracking()
-                .FirstAsync(x => x.Id == quizId);
+                .Include(x => x.Questions)                   
+                    .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == quizId);       
 
             return quiz;
         }
@@ -63,14 +62,19 @@ namespace QuizApi.Data.Db
             await _context.Responses.AddRangeAsync(responses);
         }
 
-        public async Task<long> AddTakeWithSavingAsync(Take take)
+        public async Task<Take> AddTakeAsync(Take take)
         {
-            var result = await _context.Takes.AddAsync(take);
-            await SaveChangesAsync();
+            var result = await _context.Takes.AddAsync(take);   
 
-            var insertedTakeId = result.Entity.Id;
+            return result.Entity;
+        }
 
-            return insertedTakeId;
+        public async Task<Take?> GetTakeAsync(long userId, long quizId)
+        {
+            var take = await _context.Takes.AsNoTracking()
+                .FirstOrDefaultAsync(x => x.UserId == userId && x.QuizId == quizId);
+
+            return take;
         }
 
         public async Task AddResultAsync(Result result)
@@ -80,10 +84,8 @@ namespace QuizApi.Data.Db
 
         public async Task<Result?> GetResultAsync(long takeId)
         {
-            var result = await _context.Results
-                .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.TakeId == takeId);
-
+            var result = await _context.Results.FindAsync(takeId);           
+             
             return result;
         }
 
@@ -92,6 +94,27 @@ namespace QuizApi.Data.Db
             var dbChangesCount = await _context.SaveChangesAsync();
 
             return dbChangesCount;
+        }
+
+        public async Task<Quiz> GetQuizByTakeIdAsync(long takeId)
+        {
+            var quiz = await _context.Quizzes
+               .Include(x => x.Questions)
+                   .ThenInclude(x => x.Options)
+               .AsNoTracking()
+               .FirstOrDefaultAsync(x => x.Takes.Any(x => x.Id == takeId));
+
+            return quiz;
+        }
+
+        public async Task<List<Option>> GetOptions(long questionId)
+        {
+            var options =await _context.Options
+                .Where(x => x.QuestionId == questionId)
+                .AsNoTracking()
+                .ToListAsync();
+
+            return options;
         }
     }
 }
